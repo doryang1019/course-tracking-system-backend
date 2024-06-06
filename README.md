@@ -1,7 +1,3 @@
-Here is a draft for a README file for your project:
-
----
-
 # Course Registration System
 
 ## Overview
