@@ -3,9 +3,9 @@
 python enviornment >=3.10
 
 ### setting virtual env
-python -m venv /path/to/your/env
-source /path/to/your/env/bin/activate
-pip install -r requirements.txt
+python -m venv /path/to/your/env  
+source /path/to/your/env/bin/activate  
+pip install -r requirements.txt  
 
 ### run server
 python manage.py runserver 
