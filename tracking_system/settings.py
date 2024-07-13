@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'corsheaders',
     'userApplication.apps.UserapplicationConfig',
-    'drf_yasg',
 ]
 
 CORS_ORIGIN_ALLOW_ALL = True

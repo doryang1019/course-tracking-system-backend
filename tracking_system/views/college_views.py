@@ -1,4 +1,3 @@
-# your_app/views/course_views.py
 
 from django.http import JsonResponse
 from django.views import View
@@ -9,9 +8,8 @@ from ..models import Course
 import json
 import uuid
 
-
 @method_decorator(csrf_exempt, name='dispatch')
-class CourseController(View):
+class CollegeController(View):
 
     def temp(self):
         return JsonResponse("hihi", safe=False)
@@ -27,7 +25,7 @@ class CourseController(View):
                 return JsonResponse({'error': 'Course not found'}, status=404)
         else:
             courses = CourseService.get_all_courses()
-            #print(courses)
+            print(courses)
             return JsonResponse(courses, safe=False)
 
     def post(self, request):
