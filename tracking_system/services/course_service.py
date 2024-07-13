@@ -27,7 +27,7 @@ class CourseService:
             'id': str(course._id),
             'code': course.code,
             'title': course.name,
-            'childIds': [str(pre_req_id) for pre_req_id in course.pre_requisites]
+            'pre_requisites': [str(pre_req_id) for pre_req_id in course.pre_requisites]
         }
 
     @staticmethod
@@ -48,11 +48,11 @@ class CourseService:
             if not course:
                 return []
 
-            if not course['childIds']:
+            if not course['pre_requisites']:
                 return [[course]]
 
             result = []
-            for child_id in course['childIds']:
+            for child_id in course['pre_requisites']:
                 child_trees = build_tree(child_id, visited.copy())
                 for child_tree in child_trees:
                     result.append([course] + child_tree)
@@ -60,7 +60,7 @@ class CourseService:
             return result if result else [[course]]
 
         # Find root courses (courses that are not prerequisites of any other course)
-        all_prerequisites = set(child_id for course in course_dict.values() for child_id in course['childIds'])
+        all_prerequisites = set(child_id for course in course_dict.values() for child_id in course['pre_requisites'])
         root_courses = [course_id for course_id in course_dict.keys() if course_id not in all_prerequisites]
 
         # Build trees for each root course
@@ -70,7 +70,7 @@ class CourseService:
 
         # # Add standalone courses (courses with no prerequisites and not prerequisites for any other course)
         # standalone_courses = [[course] for course_id, course in course_dict.items()
-        #                       if not course['childIds'] and course_id not in all_prerequisites]
+        #                       if not course['pre_requisites'] and course_id not in all_prerequisites]
 
         return trees
 
