@@ -40,9 +40,7 @@ class CourseController(View):
         if not name or not code:
             return JsonResponse({'error': 'Name and code are required'}, status=400)
 
-        course = CourseService.create_course(name, pre_requisites)
-        course.code = code
-        course.save()
+        course = CourseService.create_course(name, code, pre_requisites)
 
         return JsonResponse({
             'id': str(course._id),

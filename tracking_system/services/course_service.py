@@ -40,48 +40,48 @@ class CourseService:
                 visited = set()
 
             if course_id in visited:
-                return []
+                return None
 
             visited.add(course_id)
             course = course_dict.get(course_id)
 
             if not course:
-                return []
+                return None
 
-            if not course['pre_requisites']:
-                return [[course]]
+            tree = [course]
 
-            result = []
-            for child_id in course['pre_requisites']:
-                child_trees = build_tree(child_id, visited.copy())
-                for child_tree in child_trees:
-                    result.append([course] + child_tree)
+            for pre_req_id in course['pre_requisites']:
+                pre_req_tree = build_tree(pre_req_id, visited.copy())
+                if pre_req_tree:
+                    tree.extend(pre_req_tree)
 
-            return result if result else [[course]]
+            return tree
 
         # Find root courses (courses that are not prerequisites of any other course)
-        all_prerequisites = set(child_id for course in course_dict.values() for child_id in course['pre_requisites'])
+        all_prerequisites = set(pre_req_id for course in course_dict.values() for pre_req_id in course['pre_requisites'])
         root_courses = [course_id for course_id in course_dict.keys() if course_id not in all_prerequisites]
 
         # Build trees for each root course
         trees = []
+        visited = set()
         for root_id in root_courses:
-            trees.extend(build_tree(root_id))
+            tree = build_tree(root_id, visited.copy())
+            if tree:
+                trees.append(tree)
 
-        # # Add standalone courses (courses with no prerequisites and not prerequisites for any other course)
-        # standalone_courses = [[course] for course_id, course in course_dict.items()
-        #                       if not course['pre_requisites'] and course_id not in all_prerequisites]
+        # Sort trees by the code of the root course
+        trees.sort(key=lambda tree: tree[0]['code'])
 
         return trees
 
     @staticmethod
-    def create_course(name, pre_requisites):
+    def create_course(name, code, pre_requisites):
         print(name, type(pre_requisites))
         # if pre_requisites == [] or pre_requisites is None:
         #     pre_requisites = '[]'
         # else:
         #     pre_requisites = json.dumps(pre_requisites)
-        course = Course(name=name, pre_requisites=pre_requisites)
+        course = Course(name=name, code=code, pre_requisites=pre_requisites)
         print('221')
         course.save()
         print('222')
