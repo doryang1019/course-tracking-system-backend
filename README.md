@@ -3,8 +3,8 @@
 python enviornment >=3.10
 
 ### setting virtual env
-python -m venv /path/to/your/env  
-source /path/to/your/env/bin/activate  
+(Mac) python -m venv /path/to/your/env      (Windows) pyhon -m venv ./venv
+(Mac) source /path/to/your/env/bin/activate  (Windows) activate venv/Scripts
 pip install -r requirements.txt  
 
 ### run server
