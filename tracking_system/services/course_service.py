@@ -27,14 +27,14 @@ class CourseService:
             'id': str(course._id),
             'code': course.code,
             'title': course.name,
-            'pre_requisites': [str(pre_req_id) for pre_req_id in course.pre_requisites]
+            'childIds': [str(pre_req_id) for pre_req_id in course.pre_requisites]
         }
 
     @staticmethod
     def get_all_courses():
         courses = Course.objects.all()
         course_dict = {str(course._id): CourseService.get_course_dict(course) for course in courses}
-
+        print(course_dict)
         def build_tree(course_id, visited=None):
             if visited is None:
                 visited = set()
@@ -50,7 +50,7 @@ class CourseService:
 
             tree = [course]
 
-            for pre_req_id in course['pre_requisites']:
+            for pre_req_id in course['childIds']:
                 pre_req_tree = build_tree(pre_req_id, visited.copy())
                 if pre_req_tree:
                     tree.extend(pre_req_tree)
@@ -58,9 +58,21 @@ class CourseService:
             return tree
 
         # Find root courses (courses that are not prerequisites of any other course)
-        all_prerequisites = set(pre_req_id for course in course_dict.values() for pre_req_id in course['pre_requisites'])
-        root_courses = [course_id for course_id in course_dict.keys() if course_id not in all_prerequisites]
+        # all_prerequisites = set(pre_req_id for course in course_dict.values() for pre_req_id in course['childIds'])
+        # root_courses = [course_id for course_id in course_dict.keys() if course_id not in all_prerequisites]
+        all_prerequisites = set()
+        for course in course_dict.values():
+            for pre_req_id in course['childIds']:
+                all_prerequisites.add(pre_req_id)
 
+        # Find root courses (courses that are not prerequisites of any other course)
+        root_courses = []
+        for course_id in course_dict.keys():
+            if course_id not in all_prerequisites:
+                root_courses.append(course_id)
+        print("root courses")
+        for i in root_courses:
+            print(i)
         # Build trees for each root course
         trees = []
         visited = set()
@@ -68,7 +80,7 @@ class CourseService:
             tree = build_tree(root_id, visited.copy())
             if tree:
                 trees.append(tree)
-
+        # print(trees)
         # Sort trees by the code of the root course
         trees.sort(key=lambda tree: tree[0]['code'])
 
