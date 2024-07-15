@@ -43,7 +43,7 @@ urlpatterns = [
     # path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('admin/', admin.site.urls),
     path('first/', include('first_app.urls')),
-    path('courses/tmp', CourseController.temp, name='course_temp'),
+    path('courses/list', CourseController.course_list, name='list_bar'),
     path('courses/', CourseController.as_view(), name='course_list'),
     path('courses/<str:course_id>/', CourseController.as_view(), name='course_detail'),
 

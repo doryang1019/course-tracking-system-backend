@@ -16,12 +16,19 @@ class CourseController(View):
     def temp(self):
         return JsonResponse("hihi", safe=False)
 
+    def course_list(self):
+        try:
+            result = CourseService.course_list()
+            return JsonResponse(result,safe=False )
+        except (ValueError, Course.DoesNotExist):
+            return JsonResponse({'error': 'list not found'}, status=404)
+
     def get(self, request, course_id=None):
         print('exists' if course_id else 'not exists')
         if course_id:
             try:
                 course_uuid = uuid.UUID(course_id)
-                course = CourseService.get_course(course_uuid)
+                course = CourseService.get_all_courses(course_uuid)
                 return JsonResponse(course, safe=False)
             except (ValueError, Course.DoesNotExist):
                 return JsonResponse({'error': 'Course not found'}, status=404)

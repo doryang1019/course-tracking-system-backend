@@ -2,8 +2,16 @@
 
 import json
 from ..models import Course
-
+from django.db.models import Q
 class CourseService:
+
+    @staticmethod
+    def course_list():
+        courses = Course.objects.all()
+        result = []
+        for course in courses:
+            result.append({'id': course._id, 'code': course.code, 'name': course.name})
+        return result
 
     @staticmethod
     def has_child(course_id):
@@ -31,8 +39,29 @@ class CourseService:
         }
 
     @staticmethod
-    def get_all_courses():
+    def get_all_courses(course_id = None):
+
         courses = Course.objects.all()
+        # print("courses")
+        # print(courses)
+        # print("courses")
+        #  | Q(pre_requisites__contains=course_id)
+        for course in courses:
+            print(course.pre_requisites)
+        if course_id:
+            course = courses.filter(Q(_id=course_id))
+            ids = []
+            for pre in course[0].pre_requisites:
+                c = courses.filter(Q(_id=pre))
+
+                ids.append(pre)
+                ids.extend(c[0].pre_requisites)
+            # ids = list(course[0].pre_requisites)
+            ids.append(course_id)
+            courses = courses.filter(_id__in=ids)
+            # print("courses")
+            # print(courses)
+            # print("courses")
         course_dict = {str(course._id): CourseService.get_course_dict(course) for course in courses}
         print(course_dict)
         def build_tree(course_id, visited=None):
@@ -64,7 +93,8 @@ class CourseService:
         for course in course_dict.values():
             for pre_req_id in course['childIds']:
                 all_prerequisites.add(pre_req_id)
-
+        print("all_prerequisites")
+        print(all_prerequisites)
         # Find root courses (courses that are not prerequisites of any other course)
         root_courses = []
         for course_id in course_dict.keys():
@@ -102,7 +132,30 @@ class CourseService:
     @staticmethod
     def get_course(course_id):
         course = Course.objects.get(_id=course_id)
-        return CourseService.get_prerequisites(course._id)
+        course_dic = {str(course._id): CourseService.get_course_dict(course)}
+        print(course_dic)
+        def build_tree(course_id, visited=None):
+            if visited is None:
+                visited = set()
+
+            if course_id in visited:
+                return None
+
+            visited.add(course_id)
+            course = course_dic.get(course_id)
+
+            if not course:
+                return None
+
+            tree = [course]
+            print("tree")
+            print(tree)
+            for pre_req_id in course['childIds']:
+                pre_req_tree = build_tree(pre_req_id, visited.copy())
+                if pre_req_tree:
+                    tree.extend(pre_req_tree)
+
+            return tree
 
 
 
