@@ -19,6 +19,8 @@ class CourseController(View):
     def course_list(self):
         try:
             result = CourseService.course_list()
+            print(result)
+            result.sort(key=lambda x: x['code'])
             return JsonResponse(result,safe=False )
         except (ValueError, Course.DoesNotExist):
             return JsonResponse({'error': 'list not found'}, status=404)
