@@ -35,6 +35,7 @@ class CourseService:
             'id': str(course._id),
             'code': course.code,
             'title': course.name,
+            'description': course.description,
             'childIds': [str(pre_req_id) for pre_req_id in course.pre_requisites]
         }
 
